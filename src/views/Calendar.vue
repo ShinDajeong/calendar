@@ -179,18 +179,19 @@ export default {
       }
     },
     onBeforeDeleteSchedule(res) {
+      var self = this;
       if(res.schedule.id === this.empId){
           axios
         .delete('https://463d2ocmf7.execute-api.ap-northeast-2.amazonaws.com/vacation/vacation', {
           data: {
             empId: res.schedule.id,
-            startDate: res.schedule.start._date.getFullYear()+'-'+this.months[res.schedule.start._date.getMonth()+1]+'-'+this.days[res.schedule.start._date.getDate()],
-            endDate: res.schedule.end._date.getFullYear()+'-'+this.months[res.schedule.end._date.getMonth()+1]+'-'+this.days[res.schedule.end._date.getDate()]
+            startDate: res.schedule.start._date.getFullYear()+'-'+self.months[res.schedule.start._date.getMonth()+1]+'-'+self.days[res.schedule.start._date.getDate()],
+            endDate: res.schedule.end._date.getFullYear()+'-'+self.months[res.schedule.end._date.getMonth()+1]+'-'+self.days[res.schedule.end._date.getDate()]
           }
         })
         .then((res) => {
           console.log(res);
-          this.loadSchedule();
+          self.loadSchedule();
         })
         .catch((err) => {
           console.log(err);
@@ -216,9 +217,7 @@ export default {
       this.name = b.name;
     },
     loadSchedule() {
-      /* */
-      // var self = this;
-
+      var self = this;
         axios
         .get('https://463d2ocmf7.execute-api.ap-northeast-2.amazonaws.com/vacation/vacation', {
         params: {
@@ -227,9 +226,9 @@ export default {
         }
         })
         .then((res) => {
-          this.scheduleList = [];
+          self.scheduleList = [];
           for(var i=0; i<res.data.length; i++){
-            if(this.selected === 'All' || this.selected === res.data[i].empid){
+            if(self.selected === 'All' || self.selected === res.data[i].empid){
               var obj = new Object();
               obj.id = res.data[i].empid,
               obj.calendarId= "1";
@@ -240,10 +239,10 @@ export default {
               obj.dueDateClass= "",
               obj.start= res.data[i].startdate,
               obj.end= res.data[i].enddate,
-              obj.borderColor= this.getColor(i+1),
+              obj.borderColor= self.getColor(i+1),
               obj.color= "#ffffff",
-              obj.bgColor= this.getColor(i+1),
-              this.scheduleList.push(obj);
+              obj.bgColor= self.getColor(i+1),
+              self.scheduleList.push(obj);
             }
             
           }
@@ -254,6 +253,7 @@ export default {
       
     },
     async getAllMember() {
+      var self = this;
       const memberSet = new Set();
       await axios
         .get('https://463d2ocmf7.execute-api.ap-northeast-2.amazonaws.com/vacation/vacation', {
@@ -269,7 +269,7 @@ export default {
               var obj = new Object(); 
               obj.title = res.data[i].name;
               obj.value = res.data[i].empid;
-              this.memberOptions.push(obj);
+              self.memberOptions.push(obj);
             }
           }
         })
