@@ -100,19 +100,7 @@ export default {
       useDetailPopup: true,
       useCreationPopup: false,
       months: [
-        "00",
-        "01",
-        "02",
-        "03",
-        "04",
-        "05",
-        "06",
-        "07",
-        "08",
-        "09",
-        "10",
-        "11",
-        "12",
+        "00","01","02","03","04","05","06","07","08","09","10","11","12",
       ],
       days: [
         "00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", 
@@ -173,23 +161,24 @@ export default {
     movePrev() {
       this.$refs.tuiCal.invoke("prev");
       this.setRenderRangeText();
+      this.loadSchedule();
     },
     moveNext() {
       this.$refs.tuiCal.invoke("next");
       this.setRenderRangeText();
+      this.loadSchedule();
     },
     moveToday() {
       this.$refs.tuiCal.invoke("today");
       this.setRenderRangeText();
+      this.loadSchedule();
     },
     onClickSchedule(e){
-      console.log(e);
       if(e.schedule.id !== this.empId){
         hideButtons();
       }
     },
     onBeforeDeleteSchedule(res) {
-      console.group("onBeforeDeleteSchedule");
       if(res.schedule.id === this.empId){
           axios
         .delete('https://463d2ocmf7.execute-api.ap-northeast-2.amazonaws.com/vacation/vacation', {
@@ -227,6 +216,9 @@ export default {
       this.name = b.name;
     },
     loadSchedule() {
+      /* */
+      // var self = this;
+
         axios
         .get('https://463d2ocmf7.execute-api.ap-northeast-2.amazonaws.com/vacation/vacation', {
         params: {
@@ -242,7 +234,8 @@ export default {
               obj.id = res.data[i].empid,
               obj.calendarId= "1";
               obj.title= res.data[i].name,
-              obj.body= '<b>' + this.types[res.data[i].type] + '</b> <br>' + res.data[i].content,
+              obj.body= '<b>' + res.data[i].startdate + '~ ' + res.data[i].enddate + '</b> <br>' + 
+              '<b>' + this.types[res.data[i].type] + '</b> <br>' + res.data[i].content,
               obj.category= "time",
               obj.dueDateClass= "",
               obj.start= res.data[i].startdate,
@@ -286,11 +279,10 @@ export default {
     }
   },
    async mounted() {
-    this.init();
-    this.getQueryStringObject();
-    await this.getAllMember();
-    this.loadSchedule();
-    
+    this.init();  // 현재 날짜를 기준으로 캘린더 load 
+    this.getQueryStringObject();  // querystring에서 teamid, empid, name 설정
+    await this.getAllMember();  // 해당 월에 휴가를 입력한 팀원 불러오기
+    this.loadSchedule();  // 조건에 맞는 휴가 일정 캘린더에 load
   },
 };
 function hideButtons(){
@@ -313,12 +305,24 @@ function hideButtons(){
 }
 
 .menu-btn {
-  margin: 50px 0px 30px 0px;
+  margin: 50px 0px 50px 0px;
 }
 
 .render-range {
   font-size: 18px;
 }
+
+@media screen and (max-width: 768px) { 
+  .render-range { 
+    font-size: 2rem;
+    display: flex !important;
+    position: absolute !important;
+    left: 40% !important;
+    width: 20%;
+    margin: 0px 0px 0px -5%;
+  } 
+}
+
 
 /* 캘린더 UI 수정 */
 .tui-full-calendar-popup-edit {
