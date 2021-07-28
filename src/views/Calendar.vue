@@ -68,7 +68,7 @@
 import "tui-calendar/dist/tui-calendar.css";
 import { Calendar } from "@toast-ui/vue-calendar";
 import axios from "axios";
-
+const SERVER_URL = process.env.VUE_APP_SERVER;
 export default {
   name: "Calendar",
   components: {
@@ -182,7 +182,7 @@ export default {
       var self = this;
       if(res.schedule.id === this.empId){
           axios
-        .delete('https://463d2ocmf7.execute-api.ap-northeast-2.amazonaws.com/vacation/vacation', {
+        .delete(`${SERVER_URL}/vacation/vacation`, {
           data: {
             empId: res.schedule.id,
             startDate: res.schedule.start._date.getFullYear()+'-'+self.months[res.schedule.start._date.getMonth()+1]+'-'+self.days[res.schedule.start._date.getDate()],
@@ -219,7 +219,7 @@ export default {
     loadSchedule() {
       var self = this;
         axios
-        .get('https://463d2ocmf7.execute-api.ap-northeast-2.amazonaws.com/vacation/vacation', {
+        .get(`${SERVER_URL}/vacation/vacation`, {
         params: {
           teamId: decodeURIComponent(this.teamId),
           date: this.dateRange.substring(0,7).replaceAll('.', '-')
@@ -256,7 +256,7 @@ export default {
       var self = this;
       const memberSet = new Set();
       await axios
-        .get('https://463d2ocmf7.execute-api.ap-northeast-2.amazonaws.com/vacation/vacation', {
+        .get(`${SERVER_URL}/vacation/vacation`, {
         params: {
           teamId: decodeURIComponent(this.teamId),
           date: this.dateRange.substring(0,7).replaceAll('.', '-')
